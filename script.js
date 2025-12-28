@@ -3,23 +3,22 @@ import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.115.0/exampl
 import { OBJLoader } from 'https://cdn.jsdelivr.net/npm/three@0.115.0/examples/jsm/loaders/OBJLoader.js';
 import { MeshSurfaceSampler } from 'https://cdn.jsdelivr.net/npm/three@0.115.0/examples/jsm/math/MeshSurfaceSampler.js';
 
-// --- PHẦN THAY ĐỔI: YOUTUBE LOGIC ---
-// Chúng ta sẽ kiểm tra xem video đã sẵn sàng chưa thông qua biến toàn cục từ HTML
+// --- PHẦN LOGIC ĐIỀU KHIỂN ---
 const startBtn = document.getElementById('startBtn');
 const veil = document.getElementById('veil');
 
-// Lắng nghe sự kiện click từ nút Start trong file HTML đã sửa ở bước trước
+// Chạy vòng lặp 3D ngay lập tức để hoa xuất hiện
+sequence(); 
+
 startBtn.addEventListener('click', () => {
-    // Biến 'player' được định nghĩa trong mã HTML (YouTube API)
+    // Chỉ kích hoạt nhạc khi bấm nút
     if (typeof player !== 'undefined' && player.playVideo) {
         player.playVideo();
     }
     
-    // Ẩn màn hình chờ và bắt đầu hiệu ứng 3D
     veil.style.opacity = "0";
     setTimeout(() => {
         veil.style.display = "none";
-        sequence(); // Bắt đầu vòng lặp render
     }, 1000);
 });
 // ------------------------------------
@@ -78,8 +77,15 @@ scene.add(base);
 
 var uniformsTree = { time: {value: 0} };
 var loader = new OBJLoader();
+// Tìm dòng loader.load và thay link như sau:
 loader.load( 'https://raw.githubusercontent.com/mrdoob/three.js/master/examples/models/obj/tree.obj', object => {
-   // ... code bên trong giữ nguyên
+    // ... giữ nguyên code bên trong ...
+    
+    // Đảm bảo khi cây tải xong thì hiện nút Start
+    if(document.getElementById('percentage')) {
+        document.getElementById('percentage').style.display = "none";
+    }
+    if(startBtn) startBtn.style.display = "block";
 });
   let mat = new THREE.MeshBasicMaterial({color: 0xff2266, wireframe: false, transparent: true, opacity: 0.75});
   object.children[0].material = mat;
