@@ -5,6 +5,12 @@ import { MeshSurfaceSampler } from 'https://cdn.jsdelivr.net/npm/three@0.115.0/e
 
 // soundcloud widget section
 var widget = SC.Widget(scWidget);
+// Thêm dòng này để ép nó load bài mới nếu HTML chưa cập nhật kịp
+widget.load("https://api.soundcloud.com/tracks/2076195140", {
+  color: "#ead5cd",
+  auto_play: false,
+  visual: true
+});
 widget.bind(SC.Widget.Events.PLAY, ()=>{
   veil.style.display = "none";
   scWidget.style.display = "none";
