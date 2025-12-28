@@ -1,13 +1,16 @@
 body {
   overflow: hidden;
   margin: 0;
+  background-color: #ffaacc;
+  font-family: Arial, sans-serif;
 }
 
-#scWidget {
+canvas {
+  display: block;
+}
+
+#ytPlayer {
   position: absolute;
-  width: 50vh;
-  height: 50vh;
-  left: calc(50vw - 25vh);
-  top: calc(50vh - 25vh);
-  display: none;
+  top: -9999px; /* Ẩn trình phát video đi để chỉ nghe nhạc */
+  left: -9999px;
 }
