@@ -78,7 +78,9 @@ scene.add(base);
 
 var uniformsTree = { time: {value: 0} };
 var loader = new OBJLoader();
-loader.load( 'https://threejs.org/examples/models/obj/tree.obj', object => {
+loader.load( 'https://raw.githubusercontent.com/mrdoob/three.js/master/examples/models/obj/tree.obj', object => {
+   // ... code bên trong giữ nguyên
+});
   let mat = new THREE.MeshBasicMaterial({color: 0xff2266, wireframe: false, transparent: true, opacity: 0.75});
   object.children[0].material = mat;
   
