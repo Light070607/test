@@ -5,18 +5,10 @@ import { MeshSurfaceSampler } from 'https://cdn.jsdelivr.net/npm/three@0.115.0/e
 
 // soundcloud widget section
 var widget = SC.Widget(scWidget);
-// Thêm dòng này để ép nó load bài mới nếu HTML chưa cập nhật kịp
-widget.load("https://api.soundcloud.com/tracks/2076195140", {
-  color: "#ead5cd",
-  auto_play: false,
-  visual: true
-});
+
 widget.bind(SC.Widget.Events.PLAY, ()=>{
   veil.style.display = "none";
   scWidget.style.display = "none";
-  /*scWidget.style.height = "20vh";
-  scWidget.style.left = "0px";
-  scWidget.style.top = "0px";*/
   sequence();
 });
 ////////////////////////////
@@ -29,12 +21,10 @@ var camera = new THREE.PerspectiveCamera(
   1000
 );
 camera.position.set(0, 5, 10);
-//camera.lookAt(0, 5, 0);
 var renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 let bc = new THREE.Color(0xffaacc);
 renderer.setClearColor(bc);
-//console.log(new THREE.Color(0xff88aa));
 document.body.appendChild(renderer.domElement);
 window.addEventListener("resize", onWindowResize, false);
 
@@ -56,7 +46,6 @@ baseGeom.rotateX(-Math.PI * 0.5);
 var baseMat = new THREE.MeshBasicMaterial({color: 0xff0088});
 baseMat.defines = {"USE_UV" : ""};
 baseMat.onBeforeCompile = shader => {
-  //console.log(shader.fragmentShader);
   shader.fragmentShader = shader.fragmentShader.replace(
     `gl_FragColor = vec4( outgoingLight, diffuseColor.a );`,
     `
@@ -78,8 +67,6 @@ var uniformsTree = {
 };
 var loader = new OBJLoader();
 loader.load( 'https://threejs.org/examples/models/obj/tree.obj', object => {
-  
-  //object.children[0].visible = false;
   
   let mat = new THREE.MeshBasicMaterial({color: 0xff2266, wireframe: false, transparent: true, opacity: 0.75});
   object.children[0].material = mat;
@@ -103,7 +90,6 @@ loader.load( 'https://threejs.org/examples/models/obj/tree.obj', object => {
   treePoints.geometry.setAttribute("angle", new THREE.BufferAttribute(new Float32Array(angle), 1));
   treePoints.geometry.setAttribute("idx", new THREE.BufferAttribute(new Float32Array(idx), 1));
   treePoints.material.onBeforeCompile = shader => {
-    //console.log(shader.vertexShader);
     shader.uniforms.time = uniformsTree.time;
     shader.vertexShader = `
     uniform float time;
@@ -150,15 +136,13 @@ gl_PointSize = size + (sin(tIdx) * cos(tIdx * 2.5) * 0.5 + 0.5) * halfSize * 0.5
         vec4 diffuseColor = vec4(mix(col, diffuse, pow(d, 2.)), 1.);
 `
     );
-    //console.log(shader.fragmentShader);
   }
   
   object.add(treePoints);
-  
   object.rotation.y = THREE.Math.DEG2RAD * 20;
   object.scale.setScalar(5);
   scene.add(object);
-// interface
+
   percentage.style.display = "none";
   scWidget.style.display = "block";
 },
@@ -166,16 +150,14 @@ function ( xhr ) {
   percentage.innerText = (xhr.loaded / xhr.total * 100).toFixed(0) + '%';
 });
 
-
 // petals
-
-var r = 4.5; // radius
+var r = 4.5;
 var MAX_POINTS = 15000;
 var pointsCount = 0;
-let points = []; //3
-let delay = [];  //1
-let speed = [];  //2
-let color = [];  //3
+let points = [];
+let delay = [];
+let speed = [];
+let color = [];
 let c = new THREE.Color();
 while( pointsCount < MAX_POINTS){
   let vec = new THREE.Vector3(THREE.Math.randFloat(-r, r), 0, THREE.Math.randFloat(-r, r));
@@ -183,21 +165,21 @@ while( pointsCount < MAX_POINTS){
   if (vec.length() <= r && Math.random() < (1. - rRatio)) {
     points.push(vec);
     c.set(0xffffcc);
-    color.push(c.r,c.g - Math.random() * 0.1,c.b + Math.random() * 0.2);
+    color.push(c.r, c.g - Math.random() * 0.1, c.b + Math.random() * 0.2);
     delay.push(THREE.Math.randFloat(-10,0));
     let val = THREE.Math.randFloat(1, 2);
     val = Math.random() < 0.25 ? 0 : val;
-    speed.push(Math.PI * val * 0.125, val); // angle, height
+    speed.push(Math.PI * val * 0.125, val);
     pointsCount++;
   }
 }
-console.log(points.length);
+
 let pointsGeom = new THREE.BufferGeometry().setFromPoints(points);
 pointsGeom.setAttribute("color", new THREE.BufferAttribute(new Float32Array(color), 3));
 pointsGeom.setAttribute("delay", new THREE.BufferAttribute(new Float32Array(delay), 1));
 pointsGeom.setAttribute("speed", new THREE.BufferAttribute(new Float32Array(speed), 2));
 
-// 2020 texture ////////////////////////////////////////////////
+// 2026 texture
 var cnvs = document.createElement("canvas");
 cnvs.width = 128;
 cnvs.height = 64;
@@ -211,7 +193,6 @@ ctx.textBaseline = "middle";
 ctx.font = "bold 56px Arial";
 ctx.fillText("2026", cnvs.width * 0.5, cnvs.height * 0.5);
 var tex2020 = new THREE.CanvasTexture(cnvs);
-/////////////////////////////////////////////////////////////////
 
 var uniforms = {
   time: {value: 0},
@@ -222,9 +203,8 @@ var uniforms = {
   tex2020: {value: tex2020},
   azimuth: {value: 0}
 }
-var pointsMat = new THREE.PointsMaterial({/*color: 0xffddaa,*/ vertexColors: THREE.VertexColors, size: 0.2});
+var pointsMat = new THREE.PointsMaterial({vertexColors: THREE.VertexColors, size: 0.2});
 pointsMat.onBeforeCompile = shader => {
-  
   shader.uniforms.time = uniforms.time;
   shader.uniforms.upperLimit = uniforms.upperLimit;
   shader.uniforms.upperRatio = uniforms.upperRatio;
@@ -252,7 +232,6 @@ pointsMat.onBeforeCompile = shader => {
   mat2 rot( float a){
     return mat2(cos(a), -sin(a), sin(a), cos(a));
   }
-
 ` + shader.vertexShader;
   shader.vertexShader = shader.vertexShader.replace(
     `#include <begin_vertex>`,
@@ -283,13 +262,12 @@ pointsMat.onBeforeCompile = shader => {
     transformed.x += cos(spiralA) * sRadius;
     transformed.z += sin(spiralA) * -sRadius;
 
-    // 2020 effect
     vec3 efcPos = vec3(0, 6, 0.5);
     vec3 efcClamp = vec3(1., 0.75, 0.25) * 3.5;
     vec3 efcMin = efcPos - efcClamp;
     vec3 efcMax = efcPos + efcClamp;
     vec3 UVTransformed = vec3(transformed);
-    UVTransformed.xz *= rot(azimuth); // following the camera's azimuthal angle    
+    UVTransformed.xz *= rot(azimuth);    
     vec3 efcUV = (UVTransformed - efcMin) / (efcMax - efcMin);
     
     float isEffect = texture2D(tex2020, efcUV.xy).r;
@@ -326,7 +304,7 @@ gl_PointSize = size * ( cond ? 0.75 : ((1. - hRatio) * (smoothstep(0., 0.01, hRa
     uv *= rot(a);
     uv.y *= floor(a + 0.5) == 0. ? 1.25 : 2. + sin(a * PI);
 
-    if (length(uv) > 0.5) discard;  // shape function
+    if (length(uv) > 0.5) discard;
 
     #include <clipping_planes_fragment>`
   );
@@ -339,7 +317,6 @@ gl_PointSize = size * ( cond ? 0.75 : ((1. - hRatio) * (smoothstep(0., 0.01, hRa
         diffuseColor = vec4(mix(diffuseColor.rgb, vec3(0.95, 0, 0.45), vIsEffect), 1.);
 `
     );
-  //console.log(shader.fragmentShader);
 }
 
 var p = new THREE.Points(pointsGeom, pointsMat);
@@ -349,30 +326,20 @@ var clock = new THREE.Clock();
 var t = 0;
 
 function sequence() {
-
   renderer.setAnimationLoop(() => {
-
     t += clock.getDelta()*0.5;
     uniforms.time.value = t;
     uniforms.azimuth.value = controls.getAzimuthalAngle();
     uniformsTree.time.value = t * 5;
     controls.update();
     renderer.render(scene, camera);
-
   });
-  
 }
 
-//btnRepeat.addEventListener("click", event => {t = 0;}, false);
-
-
-
 function onWindowResize() {
-  
   var width = window.innerWidth;
   var height = window.innerHeight;
   camera.aspect = width / height;
   camera.updateProjectionMatrix();
   renderer.setSize(width, height);
-  
 }
